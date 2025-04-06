@@ -374,3 +374,18 @@ app/docs/[[...slug]]/page.tsx
 
 ---
 
+### catch-all route
+
+`[x]` matches **a single dynamic segment** (e.g. `/user/123` → `x = 123`)  
+`[...x]` matches **multiple segments as an array** (e.g. `/docs/a/b` → `x = ['a', 'b']`)  
+The `...` tells Next.js it's a **catch-all route** for deep nesting.
+
+- `[x]` captures a **single dynamic segment**, like `/post/123`.  
+- `[...x]` captures **multiple segments**, like `/docs/a/b/c`, as an array `['a', 'b', 'c']`.  
+- `[...x]` is called a **catch-all route**.  
+- Useful for nested content, breadcrumbs, or fallback pages.  
+- You can access the segments using `router.query.x` in a page.  
+- Using `[x]` instead of `[...x]` for multi-segment paths leads to a 404 error.
+
+---
+
