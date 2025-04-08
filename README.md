@@ -389,3 +389,172 @@ The `...` tells Next.js it's a **catch-all route** for deep nesting.
 
 ---
 
+### 📐 Layouts in Next.js (App Router) – From Basic to Production-Level
+
+---
+
+#### 🧱 **What is a Layout?**
+In Next.js App Router (since `app/` structure), a **layout** is a special React component defined in `layout.tsx` (or `.js`) inside a route folder. It **wraps the page and persists across nested routes**, making it perfect for navigation bars, sidebars, or persistent UI.
+
+---
+
+#### 🔍 **How Layouts Work Internally**
+- **Layouts are automatically detected** by their filename `layout.tsx`.
+- When a page (like `page.tsx`) exists in the same folder, Next.js **automatically renders it inside the layout**, even if `children` aren’t manually passed in the page.
+- The framework **injects `children` into the layout** under the hood via server components logic.
+
+So this works automatically:
+
+```tsx
+// app/dashboard/layout.tsx
+export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="flex">
+      <Sidebar />
+      <main>{children}</main> // ← injected automatically
+    </div>
+  );
+}
+```
+
+And this will be rendered:
+
+```tsx
+// app/dashboard/page.tsx
+export default function DashboardPage() {
+  return <div>Dashboard Content</div>;
+}
+```
+
+You don’t need to manually wrap it around `children` like in `_app.js` from the old Pages Router.
+
+---
+
+#### 🧠 Min vs Max Complexity
+
+| Level | Description |
+|-------|-------------|
+| **Minimal** | Just a single `layout.tsx` with `children`, no reusability |
+| **Intermediate** | Nested layouts (e.g., `app/(marketing)/layout.tsx` and `app/(dashboard)/layout.tsx`) for sectioned UI |
+| **Advanced (Prod)** | Shared layouts across routes using **route groups**, **dynamic layouts**, **context providers**, **auth guards**, and layout-specific `metadata` setup |
+
+---
+
+#### 🔁 Layout Inheritance
+- Layouts are **recursive**. If you nest folders, each folder’s layout will wrap its children unless overridden.
+- Example: `app/layout.tsx` → wraps everything, but `app/dashboard/layout.tsx` can override it for dashboard-only styling.
+
+---
+
+#### 💡 Route Groups + Layouts
+Use `(group)` folders when you want **different layouts without affecting the URL path**.
+
+Example:
+
+```
+app
+├── (marketing)
+│   └── layout.tsx
+│   └── home/page.tsx
+├── (dashboard)
+│   └── layout.tsx
+│   └── analytics/page.tsx
+```
+
+URLs will be `/home`, `/analytics` — no `(marketing)` or `(dashboard)` in URL.
+
+---
+
+#### ✅ Summary
+- Layouts auto-detect and inject `children`—you don’t need to manually do it.
+- They persist across navigation unless explicitly replaced.
+- Use route groups for layout separation without changing routes.
+- Production setups use nested + grouped + protected layouts with context and metadata.
+
+---
+
+### 🧩 Templates in Next.js (App Router) – Explained Simply
+
+---
+
+#### 📌 What is a Template?
+
+A **template** in Next.js is just like a **layout**, but instead of persisting between route changes, it **re-renders from scratch every time** the route changes.
+
+---
+
+#### 📂 Where do we use it?
+
+You create it in the `template.tsx` file inside any route folder:
+
+```tsx
+// app/products/template.tsx
+export default function ProductTemplate({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="p-4 bg-white shadow">
+      <Header />
+      {children} {/* This will rerender on every route inside /products */}
+    </div>
+  );
+}
+```
+
+---
+
+#### 🆚 Layout vs Template (in simple terms)
+
+| Feature | `layout.tsx` | `template.tsx` |
+|--------|--------------|----------------|
+| Persists across routes | ✅ Yes | ❌ No |
+| Re-renders on route change | ❌ No | ✅ Yes |
+| Good for | Sidebar, nav, wrappers | Per-page transitions, modals, animations |
+| Execution | Only once | Every time route loads |
+
+---
+
+#### 🧠 When to use which?
+
+- Use **`layout.tsx`** when you want consistent UI (like a dashboard sidebar).
+- Use **`template.tsx`** when you want fresh re-renders (like product previews, dynamic steps, etc).
+
+---
+
+So, **layouts are cached and persistent**, while **templates are fresh and route-specific**.
+
+
+---
+
+✅ **Yes**, `not-found.tsx` **must be lowercase** — it's a special file that Next.js **auto-detects by name**, and it only works if named exactly `not-found.tsx` in lowercase.
+
+---
+
+In Next.js (App Router), just like `not-found.tsx`, the **`loading.tsx`** and **`error.tsx`** files are:
+
+- ✅ **Automatically recognized**
+- ✅ **Must be lowercase**
+- ✅ **Must be placed inside route segments**
+
+### 🔄 `loading.tsx`
+- Used for **route-level loading UI**
+- Automatically shown when a route or its data is loading
+
+### ❌ `error.tsx`
+- Catches and displays errors thrown during:
+  - Rendering
+  - Data fetching (e.g., `fetch`, `getServerSideProps`, etc.)
+- Works like an **error boundary**
+
+> 📁 Example directory:
+```
+app/
+  dashboard/
+    page.tsx
+    loading.tsx
+    error.tsx
+    not-found.tsx
+```
+
+Each route can have its own versions of these for scoped UX.
+
+---
+
