@@ -1049,3 +1049,99 @@ export async function generateMetadata({ params }) {
 
 ---
 
+Let me explain everything you need to know as a **beginner** — including **what `@` folders are, why we use them, what happens if we don’t, how the flow works, and whether they are auto-detected**.
+
+---
+
+## 🧩 What are `@` folders in Next.js?
+
+`@` folders define **parallel segments** inside your route. They are part of the **parallel routing** feature in the App Router.
+
+### Example:
+```bash
+/members
+  @team
+    loading.tsx
+    error.tsx
+    page.tsx
+  @comments
+    loading.tsx
+    page.tsx
+```
+
+Here, `@team` and `@comments` are **parallel routes** inside the `/members` route.
+
+---
+
+## 🔄 Why Use `@` Folders? (Purpose)
+
+1. **Render multiple parts of a page independently**  
+   → Like rendering "Team" and "Comments" at the same time in different UI sections.
+
+2. **Each part has its own `loading.tsx`, `error.tsx`, and `page.tsx`**  
+   → You can show independent loaders or handle errors separately.
+
+3. **Avoid blocking the full page**  
+   → If comments fail to load, team still loads. Vice versa.
+
+4. **More control over UX**  
+   → Users don’t see a spinner for the whole screen just because one part is slow.
+
+---
+
+## 🧠 What if we don’t use `@` folders?
+
+If you define everything inside one folder (e.g., `/members`), you **can’t split** loading/error logic between parts.  
+- One error crashes the whole page.  
+- One loading blocks the entire route.
+
+---
+
+## 🛠️ How Does It Work?
+
+### 1. You define parallel routes like:
+```ts
+// /members/layout.tsx
+
+export default function MembersLayout({ team, comments }: {
+  team: React.ReactNode,
+  comments: React.ReactNode
+}) {
+  return (
+    <div className="grid grid-cols-2">
+      <div>{team}</div>
+      <div>{comments}</div>
+    </div>
+  );
+}
+```
+
+👉 The **names `team` and `comments` match the folder names `@team` and `@comments`**.  
+Next.js passes those automatically into the layout as `props`.
+
+> ✅ Yes — **Next.js auto-detects** the matching between `@foldername` and the slot name in the layout.
+
+---
+
+## 📦 Bonus: How It Renders (Flow)
+
+- When you visit `/members`, Next.js:
+  - Loads `layout.tsx`
+  - Looks for folders starting with `@`
+  - For each `@`, it loads the `page.tsx`, `loading.tsx`, or `error.tsx` depending on the state
+  - Injects the result into the layout under the right key
+
+---
+
+## 🧵 Summary
+
+| Concept          | What it does                          |
+|------------------|----------------------------------------|
+| `@team`, `@xyz`  | Defines **parallel segments**          |
+| Auto-detection   | Next.js injects based on folder name   |
+| Layout binding   | You pass children as props in layout   |
+| Benefits         | Independent loading/errors & better UX |
+| Without `@`      | You lose modularity & flexibility      |
+
+---
+

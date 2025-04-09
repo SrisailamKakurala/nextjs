@@ -1,0 +1,91 @@
+[09-04-2025 18:49] rajukadari79: <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="p2.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+          }
+          /* body{
+              background-color: black;
+          } */
+          .con {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+          }
+          .btn {
+            height: 100px;
+            width: 100px;
+            cursor: pointer;
+            border: none;
+            border: 2px solid white;
+            margin: 20px;
+          }
+          .purple {
+            background-color: purple;
+          }
+          .red {
+            background-color: red;
+          }
+          .yellow {
+            background-color: yellow;
+          }
+          .orange {
+            background-color: orange;
+          }
+    </style>
+</head>
+<body background="black" class="purple red yellow orange">
+    <div class="con">
+        <div class="nav">
+          <input type="button" value="purple" class="btn purple">
+          <input type="button" value="red" class="btn  red">
+          <input type="button" value="yellow"  class="btn  yellow">
+          <input type="button" value="orange" class="btn  orange">
+        </div>
+    </div>
+    <script>
+        const btns=document.querySelectorAll(".btn");
+        const body=document.body;
+        
+        btns.forEach((btn)=>{
+            btn.addEventListener("click",()=>{
+                color=btn.value;
+                console.log(color);
+                changeBackground(color);
+            });
+        });
+        function changeBackground(color){
+            body.className="";
+            switch(color){
+                case "purple":
+                    body.classList.add("purple");
+                    break;
+                case "red":
+                    body.classList.add("red");
+                    break;
+                case "yellow":
+                    body.classList.add("yellow");
+                    break;
+                case "orange":
+                    body.classList.add("orange");
+                    break;
+                
+        
+                default:
+                    body.classList.add("white")
+                    break;
+            };
+        };
+    </script>
+</body>
+</html>
